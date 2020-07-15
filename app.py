@@ -28,8 +28,8 @@ def create_user(conn, user):
     conn.commit()
     return cur.lastrowid
 def create_message(conn, message):
-    sql = ''' INSERt INTO messages(content,sent_date)
-              VALUES(?, ?) '''
+    sql = ''' INSERt INTO messages(content,sender, sent_date)
+              VALUES(?, ?, ?) '''
     cur = conn.cursor()
     cur.execute(sql, message)
     conn.commit
@@ -73,8 +73,19 @@ def login(conn):
     else:
         current_user = login_user
     main(current_user)
+def send_message(conn, current_user):
+    with conn:
+        message = input("$ ")
+        message_query = (message, current_user, str(datetime.now()))
+        create_message(conn, message_query)
+    main(conn)
 def get_messages(conn):
-    pass
+    cur = conn.cursor()
+    messages = cur.execute("SELECT content, sender, sent_date FROM messages").fetchall()
+
+    for message in messages:
+        print(message)
+
 def main(current_user):
     conn = create_connection(database)
     sql_create_users_table = """ CREATE TABLE IF NOT EXISTS users (
@@ -86,6 +97,7 @@ def main(current_user):
     sql_create_messages_table = """CREATE TABLE IF NOT EXISTS messages (
                                     id integer PRIMARY KEY,
                                     content text NOT NULL,
+                                    sender text NOT NULL,
                                     sent_date datetime NOT NULL
                                 );"""
     
@@ -96,11 +108,13 @@ def main(current_user):
 
     if current_user is "Guest":
         login(conn)
+    else:
+        os.system('clear')
 
-    
-    # with conn:
-    #     create_message(conn, message_1)
-    #     create_message(conn, message_2)
+    get_messages(conn)
+    send_message(conn, current_user)
+
+
 if __name__ == '__main__':
     current_user = "Guest"
     main(current_user)
