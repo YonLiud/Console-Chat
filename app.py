@@ -56,22 +56,29 @@ def login(conn):
     print("User Login Panel")
     print("To Create a user, insert into username: 'user.create'")
     print("")
+    current_user = "Guest"
     login_user = input("Username: ")
 
     if login_user == "user.create":
         create_user_panel(conn)
     login_pass = input("Password: ")
     cur = conn.cursor()
+    is_exist = cur.execute("SELECT EXISTS (SELECT 1 FROM users WHERE user_username=?)", (login_user,)).fetchone()
+    if is_exist[0] is 0:
+        print("Account Not Located")
+        exit()
     password_list = cur.execute("SELECT user_password FROM users WHERE user_username=?", (login_user,)).fetchone()
-    print(password_list[0])
+
+
+
 
     if password_list[0] != login_pass:
 
         print("\n Incorrect Password!")
-        current_user = "Guest"
-
+        login(conn)
     else:
         current_user = login_user
+
     main(current_user)
 def send_message(conn, current_user):
     with conn:
