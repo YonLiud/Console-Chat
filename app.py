@@ -40,6 +40,7 @@ def create_user(conn, user):
     cur = conn.cursor()
     cur.execute(sql, user)
     conn.commit()
+    os.system('clear')
     return cur.lastrowid
 
 
@@ -104,14 +105,13 @@ def login(conn):
 
 def send_message(conn, current_user):
     with conn:
-        message = input(f"{Fore.GREEN}$ {Style.RESET_ALL}")
+        message = input(current_user + f"{Fore.GREEN}> {Style.RESET_ALL}")
         message_query = (message, current_user, str(datetime.now()))
         create_message(conn, message_query)
     main(current_user)
 
 
 def get_messages(conn):
-
     cur = conn.cursor()
     messages = cur.execute(
         "SELECT content, sender, sent_date FROM messages").fetchall()

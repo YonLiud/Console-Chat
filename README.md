@@ -5,7 +5,7 @@ A Chat based on python3 and sqlite3, enables quick communication through a conso
  - python3
  - pip3
  - sqlite3
-
+ - Colorama
 
 
 
