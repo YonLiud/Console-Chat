@@ -14,6 +14,7 @@ A Chat based on python3 and sqlite3, enables quick communication through a conso
 $ cd Console-Chat
 $ python3 app.py
 ```
+a Database will be created automatically on first launch with the proper tables for use
 
 
 License
