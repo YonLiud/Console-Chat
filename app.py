@@ -2,9 +2,16 @@ import os
 from datetime import datetime
 import sqlite3
 from sqlite3 import Error
+from time import sleep
+import colorama
+from colorama import Fore, Style
+
+
 os.system('clear')
 print("Current Time: " + str(datetime.now()))
-
+print("Created By Yonatan Mark Liudmirsky | https://github.com/YonLiud")
+print("Starting Up Project... \n")
+sleep(2)
 database = 'database.db'
 
 
@@ -80,7 +87,7 @@ def login(conn):
     is_exist = cur.execute(
         "SELECT EXISTS (SELECT 1 FROM users WHERE user_username=?)", (login_user,)).fetchone()
     if is_exist[0] == 0:
-        print("Account Not Located")
+        print(f"{Fore.RED}Account Not Located{Style.RESET_ALL}")
         main(current_user)
     password_list = cur.execute(
         "SELECT user_password FROM users WHERE user_username=?", (login_user,)).fetchone()
@@ -97,13 +104,14 @@ def login(conn):
 
 def send_message(conn, current_user):
     with conn:
-        message = input("$ ")
+        message = input(f"{Fore.GREEN}$ {Style.RESET_ALL}")
         message_query = (message, current_user, str(datetime.now()))
         create_message(conn, message_query)
     main(current_user)
 
 
 def get_messages(conn):
+
     cur = conn.cursor()
     messages = cur.execute(
         "SELECT content, sender, sent_date FROM messages").fetchall()
@@ -136,6 +144,7 @@ def main(current_user):
     else:
         os.system('clear')
 
+
     get_messages(conn)
     send_message(conn, current_user)
 
@@ -143,3 +152,7 @@ def main(current_user):
 if __name__ == '__main__':
     current_user = "Guest"
     main(current_user)
+
+
+
+    
