@@ -1,13 +1,11 @@
+import os
 from datetime import datetime
 import sqlite3
 from sqlite3 import Error
 print("Current Time: " +  str(datetime.now()))
 
 database = 'database.db'
-
-
 def create_connection(db_file):
-    """ create a database connection to a SQLite database """
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -61,19 +59,17 @@ def login(conn):
     login_user = input("Username: ")
 
     if login_user == "user.create":
-        create_user_panel(conn)        
+        create_user_panel(conn)
     login_pass = input("Password: ")
     cur = conn.cursor()
-    cur.execute("SELECT user_password FROM users WHERE user_username=?", (login_user,))
-    password_list = cur.fetchall()
-    password_in_db = (' '.join([str(elem) for elem in password_list]))
-    print(password_in_db)
-    
+    password_list = cur.execute("SELECT user_password FROM users WHERE user_username=?", (login_user,)).fetchone()
+    print(password_list[0])
+
     if password_list[0] != login_pass:
 
         print("\n Incorrect Password!")
         current_user = "Guest"
-        
+
     else:
         current_user = login_user
     main(current_user)
@@ -96,20 +92,15 @@ def main(current_user):
     if conn is not None:
         create_table(conn, sql_create_users_table)
         create_table(conn, sql_create_messages_table)
+
+
     if current_user is "Guest":
         login(conn)
 
-    print("Welcome Back!" + current_user)
-    exit()
-
+    
     # with conn:
-    #     user = (username, '123', str(datetime.now()))
-    #     user_id = create_user(conn, user)
     #     create_message(conn, message_1)
     #     create_message(conn, message_2)
-    
-
-
 if __name__ == '__main__':
     current_user = "Guest"
     main(current_user)
